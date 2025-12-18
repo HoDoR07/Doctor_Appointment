@@ -23,6 +23,7 @@ const getallusers = async (req, res) => {
       .select("-password");
     return res.send(users);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to get all users");
   }
 };
@@ -88,6 +89,7 @@ const register = async (req, res) => {
     }
     return res.status(201).send("User registered successfully");
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to register user");
   }
 };
@@ -104,6 +106,7 @@ const updateprofile = async (req, res) => {
     }
     return res.status(201).send("User updated successfully");
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to update user");
   }
 };
@@ -153,6 +156,7 @@ const deleteuser = async (req, res) => {
     });
     return res.send("User deleted successfully");
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to delete user");
   }
 };
