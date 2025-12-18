@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Doctor = require("../models/doctorModel");
 const Appointment = require("../models/appointmentModel");
-const nodemailer = require("nodemailer"); 
+const nodemailer = require("nodemailer");
+const { testMail, testPass } = require("../utils/checkCred.js");
 require("dotenv").config();
 
 const getuser = async (req, res) => {
@@ -42,6 +43,7 @@ const login = async (req, res) => {
     if (!verifyPass) {
       return res.status(400).send("Incorrect credentials");
     }
+
     const token = jwt.sign(
       { userId: emailPresent._id, isAdmin: emailPresent.isAdmin, role:emailPresent.role },
       process.env.JWT_SECRET,
@@ -51,16 +53,33 @@ const login = async (req, res) => {
     );
     return res.status(201).send({ msg: "User logged in successfully", token });
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to login user");
   }
 };
 
 const register = async (req, res) => {
   try {
+    //check if email and password are sent as part of the request body
+    if(!req.body.email || !req.body.password){
+      return res.status(400).send("Must contain all the credentials");
+    }
+
+    //check if mail is valid or not
+    if(!testMail(req.body.email)){
+      return res.status(400).send("Email must be a valid mail");
+    }
+
+    //check if password is valid or not
+    if(!testPass(req.body.password)){
+      return res.status(400).send("Password must be atleast 8 characters containing atleast 1 letter, 1 digit and 1 symbol");
+    }
+
     const emailPresent = await User.findOne({ email: req.body.email });
     if (emailPresent) {
       return res.status(400).send("Email already exists");
     }
+
     const hashedPass = await bcrypt.hash(req.body.password, 10);
     const user = await User({ ...req.body, password: hashedPass });
     const result = await user.save();
@@ -92,7 +111,7 @@ const changepassword = async (req, res) => {
   try {
     console.log(req.body);
     const { userId, currentPassword, newPassword, confirmNewPassword } = req.body;
-    // console.log("Received newPassword:", newPassword); 
+    // console.log("Received newPassword:", newPassword);
     if (newPassword !== confirmNewPassword) {
       return res.status(400).send("Passwords do not match");
     }
@@ -108,10 +127,10 @@ const changepassword = async (req, res) => {
     }
 
     const saltRounds = 10;
-    // console.log("Using saltRounds:", saltRounds); 
+    // console.log("Using saltRounds:", saltRounds);
 
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
-    // console.log("Hashed new password:", hashedNewPassword); 
+    // console.log("Hashed new password:", hashedNewPassword);
 
     user.password = hashedNewPassword;
     await user.save();
@@ -122,8 +141,6 @@ const changepassword = async (req, res) => {
     return res.status(500).send("Internal Server Error");
   }
 };
-
-
 
 const deleteuser = async (req, res) => {
   try {
@@ -155,7 +172,7 @@ const forgotpassword = async (req, res) => {
       service: "gmail",
       auth: {
         user: "tarun.kumar.csbs25@heritageit.edu.in",
-        pass: "qfhv wohg gjtf ikvz", 
+        pass: "qfhv wohg gjtf ikvz",
       },
     });
     // console.log(transporter);
@@ -193,7 +210,7 @@ const resetpassword = async (req, res) => {
         console.log(err);
         return res.status(400).send({ error: "Invalid or expired token" });
       }
-     
+
       try {
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.findByIdAndUpdate(id, { password: hashedPassword });
