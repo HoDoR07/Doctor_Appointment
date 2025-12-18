@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const Doctor = require("../models/doctorModel");
 const Appointment = require("../models/appointmentModel");
 const nodemailer = require("nodemailer");
+const { testMail, testPass } = require("../utils/checkCred.js");
 require("dotenv").config();
 
 const getuser = async (req, res) => {
@@ -59,10 +60,26 @@ const login = async (req, res) => {
 
 const register = async (req, res) => {
   try {
+    //check if email and password are sent as part of the request body
+    if(!req.body.email || !req.body.password){
+      return res.status(400).send("Must contain all the credentials");
+    }
+
+    //check if mail is valid or not
+    if(!testMail(req.body.email)){
+      return res.status(400).send("Email must be a valid mail");
+    }
+
+    //check if password is valid or not
+    if(!testPass(req.body.password)){
+      return res.status(400).send("Password must be atleast 8 characters containing atleast 1 letter, 1 digit and 1 symbol");
+    }
+
     const emailPresent = await User.findOne({ email: req.body.email });
     if (emailPresent) {
       return res.status(400).send("Email already exists");
     }
+
     const hashedPass = await bcrypt.hash(req.body.password, 10);
     const user = await User({ ...req.body, password: hashedPass });
     const result = await user.save();

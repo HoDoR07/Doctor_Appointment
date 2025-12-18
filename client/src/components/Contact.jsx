@@ -25,9 +25,14 @@ const Contact = () => {
         <h2 className="form-heading">Contact Us</h2>
         <form
           method="POST"
-          action={`https://formspree.io/f/${process.env.REACT_FORMIK_SECRET}`}
-          className="register-form "
+          action={`https://api.web3forms.com/submit`}
+          className="register-form"
         >
+          <input
+            type="hidden"
+            name="access_key"
+            value="e1490302-3486-46b2-ad42-d5aea282b2d6"
+          />
           <input
             type="text"
             name="name"

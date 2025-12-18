@@ -25,5 +25,21 @@ This project is a Doctor Appointment System built with React, Express.js, and Mo
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/doctor-appointment-system.git
+   git clone https://github.com/HoDoR07/Doctor_Appointment.git
    cd doctor-appointment-system
+   ```
+2. **Navigate into the directory**
+   ```bash
+   cd server
+   ```
+3. **Install the dependecies**
+   ```bash
+   npm install
+   ```
+4. **Start the Server**
+   ```bash
+   npm start
+   ```
+
+### Credit
+Tarun Kumar (Original Project Creator)
