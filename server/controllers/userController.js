@@ -68,11 +68,13 @@ const register = async (req, res) => {
 
     //check if mail is valid or not
     if(!testMail(req.body.email)){
+      console.log("This ran mail");
       return res.status(400).send("Email must be a valid mail");
     }
 
     //check if password is valid or not
     if(!testPass(req.body.password)){
+      console.log("This ran pass");
       return res.status(400).send("Password must be atleast 8 characters containing atleast 1 letter, 1 digit and 1 symbol");
     }
 

@@ -5,7 +5,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function testMail(email){
     email = email.trim();
-    return regex.test(email);
+    return emailRegex.test(email);
 }
 
 //Password validator
@@ -18,7 +18,7 @@ function testMail(email){
 const passRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{5,}$/
 
 function testPass(password){
-    return typeof password === "string" && regex.test(password);
+    return typeof (password === "string" && passRegex.test(password));
 }
 
 module.exports = {
